@@ -161,7 +161,7 @@ def measure(old_cpu=None):
         "mem_pct": m_pct,
         "pump": sensor_value(sd, "kraken2", "Pump"),
         "coolant": sensor_value(sd, "kraken2", "Coolant"),
-        "sample_time": datetime.now().strftime("%H:%M:%S"),
+        "sample_time": datetime.now().strftime("%H:%M"),
         "_counter": cp,
     }
 
@@ -181,7 +181,7 @@ def draw_bar(d, x, y, width, value):
 
 
 def dashboard_png(data):
-    img = Image.new("RGB", (WIDTH, HEIGHT), BG)
+    img = Image.new("RGBA", (WIDTH, HEIGHT), BG)
     d = ImageDraw.Draw(img)
     d.text((56, 31), "SYSTEM MONITOR", font=FONT_TITLE, fill=PRIMARY)
     d.line((56, 104, 1864, 104), fill=LINE, width=2)
@@ -236,7 +236,7 @@ def dashboard_png(data):
 
 def demo_data():
     return {
-        "sample_time": "14:27:06",
+        "sample_time": "14:27",
         "cpu_temp": 52.6,
         "cpu_usage": 31.0,
         "gpu": {"temp": 59.0, "load": 74.0},

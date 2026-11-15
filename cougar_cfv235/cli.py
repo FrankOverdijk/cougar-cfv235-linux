@@ -1,4 +1,4 @@
-"""Render a local preview or run a bounded USB display session."""
+"""Render a local preview or run a USB display session."""
 
 import argparse
 import errno
@@ -38,7 +38,7 @@ def run_display(args, data, png):
             fd, device.ctrl("STATE all", 2, device.stamp(), device.state_payload(data))
         )
         device.ack(fd, 3, "initial sensor state")
-        sequence = device.transfer_background(fd, 3, device.stamp(), png)
+        sequence = device.transfer(fd, 3, device.stamp(), png, 2, "1920X462.png")
         device.send(
             fd,
             device.ctrl(
@@ -46,10 +46,11 @@ def run_display(args, data, png):
             ),
         )
         device.ack(fd, sequence + 1, "brightness")
-        sequence += 1
-        print("First frame acknowledged. Check the physical LCD.", flush=True)
+        when = device.stamp()
+        sequence = device.transfer(fd, sequence + 1, when, png, 1, f"{when}.osd")
+        print("Initial background and overlay acknowledged.", flush=True)
 
-        deadline = time.monotonic() + args.seconds
+        deadline = time.monotonic() + args.seconds if args.seconds else float("inf")
         while time.monotonic() < deadline:
             time.sleep(max(0, min(args.interval, deadline - time.monotonic())))
             if time.monotonic() >= deadline:
@@ -57,9 +58,9 @@ def run_display(args, data, png):
             data = dashboard.measure(data["_counter"])
             if time.monotonic() >= deadline:
                 break
-            sequence = device.transfer_background(
-                fd, sequence, device.stamp(), dashboard.dashboard_png(data)
-            )
+            png = dashboard.dashboard_png(data)
+            when = device.stamp()
+            sequence = device.transfer(fd, sequence, when, png, 1, f"{when}.osd")
             print(f"Frame acknowledged at {data['sample_time']}", flush=True)
     finally:
         os.close(fd)
@@ -87,7 +88,7 @@ def main(argv=None):
         "--seconds",
         type=int,
         default=20,
-        help="refresh for 0–60 seconds after the first frame",
+        help="refresh for 1–60 seconds after startup, or 0 to run until stopped",
     )
     parser.add_argument(
         "--interval", type=float, default=2, help="wait 1–10 seconds between updates"

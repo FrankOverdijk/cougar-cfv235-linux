@@ -1,4 +1,4 @@
-"""Generate CFV235 background reports and talk to Linux hidraw."""
+"""Generate CFV235 display reports and talk to Linux hidraw."""
 
 import json
 import math
@@ -159,9 +159,7 @@ def state_payload(data):
     }
 
 
-def transfer_background(fd, seq, when, png):
-    kind = 2
-    filename = "1920X462.png"
+def transfer(fd, seq, when, png, kind, filename):
     check_png(png)
     send(
         fd,

@@ -1,6 +1,6 @@
 # COUGAR CFV235 Vision on Linux
 
-An unofficial Linux dashboard for the [COUGAR CFV235 Vision](https://cougargaming.com/us/products/cases/cfv235-vision/) 1920 × 462 USB LCD. It renders CPU, GPU, memory and cooling readings as a PNG and can send that PNG as a background to the panel over Linux hidraw. A preview can run without a connected display.
+An unofficial Linux dashboard for the [COUGAR CFV235 Vision](https://cougargaming.com/us/products/cases/cfv235-vision/) 1920 × 462 USB LCD. It renders CPU, GPU, memory and cooling readings as a PNG and sends an initial background followed by dashboard overlays over Linux hidraw. A preview can run without a connected display.
 
 ![Dashboard preview showing sample CPU, GPU, memory and cooling readings](docs/dashboard-preview.png)
 
@@ -12,11 +12,11 @@ The CFV235 Vision LCD has been running stably for weeks on the project owner's L
 
 | Feature | Evidence |
 | --- | --- |
-| Physical Linux display operation | Weeks of stable operation on the owner's system. |
+| Physical Linux display operation | Weeks of stable operation on the owner's system, which uses an initial background and continuous RGBA overlay updates. |
 | Display a Linux-generated background | Visually observed in the original Ubuntu test. |
 | Local dashboard rendering | Verified offline with both sample data and unavailable sensors. |
 
-This release packages the recovered Linux background-transfer code. A direct comparison with the installed source is pending. Live refresh, brightness, and suspend/resume have separate verification status. USB acknowledgments record controller responses.
+The release carries over the transfer sequence from the running Linux service. The owner confirmed the deployed configuration with continuous refresh. Brightness changes across different levels and host suspend/resume have no separate verification results.
 
 ## Install
 
@@ -50,20 +50,20 @@ Reconnect the LCD to apply the rule during a safe maintenance window. The rule u
 # Render local sensor data without touching USB
 .venv/bin/cougar-cfv235 --preview live-preview.png
 
-# Send a single live dashboard frame
-.venv/bin/cougar-cfv235 --send --seconds 0
+# Run continuous dashboard updates until Ctrl+C
+.venv/bin/cougar-cfv235 --send --seconds 0 --interval 2
 
-# Refresh for 20 seconds after the first frame, at 70% brightness
+# Refresh for 20 seconds after the initial background and overlay
 .venv/bin/cougar-cfv235 --send --seconds 20 --interval 2 --brightness 70
 ```
 
-Ensure Linux owns the USB device before sending. If the LCD is passed through to a VM, close its LCD application and release the USB device on the guest side first. Run one LCD controller at a time. Press Ctrl+C to stop. Sending changes the displayed background and sets the selected brightness (100 by default). The program does not restore the previous screen contents. The refresh window starts after the first frame, and an in-flight USB transfer may run past the window.
+Ensure Linux owns the USB device before sending. If the LCD is passed through to a VM, close its LCD application and release the USB device on the guest side first. Run one LCD controller at a time. Press Ctrl+C to stop. Sending changes the displayed background and sets the selected brightness (100 by default). The program does not restore the previous screen contents. The timed refresh window starts after the initial background and overlay. An in-flight USB transfer may run past the window.
 
 ## Known limitations
 
 - The target is the CFV235 Vision USB panel with the observed controller ID and name. Other revisions, the standalone LCD kit and the Mesh Vision have no compatibility results here.
 - Missing readings display as `--`. CPU and memory usage come from Linux `/proc`. CPU temperature uses supported `lm-sensors` labels for AMD and Intel. Pump speed and coolant temperature require compatible `kraken2` readings. GPU readings use the first NVIDIA GPU exposed by `nvidia-smi`.
-- The first release uses full background frames for updates. Overlay-only updates, video, animations, official themes, firmware operations and startup services are outside its scope.
+- The dashboard sends one background at startup and uses overlays for subsequent updates. Video, animations, official themes, firmware operations and system service installation are outside its scope.
 - The refresh interval is a pause between updates. Reading sensors, rendering and transferring images adds time, so this is not a 60 fps video output.
 - The firmware behavior after closing the application, reconnecting USB or resuming the host still needs hardware confirmation.
 
