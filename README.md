@@ -8,15 +8,15 @@ An unofficial Linux dashboard for the [COUGAR CFV235 Vision](https://cougargamin
 
 ## Hardware status
 
+The CFV235 Vision LCD has been running stably for weeks on the project owner's Linux system. The owner confirmed this from regular use in November 2026. The original October Ubuntu test notes also record a Linux-generated background appearing on the physical panel.
+
 | Feature | Evidence |
 | --- | --- |
-| Display a Linux-generated background on the LCD | Observed in an earlier Ubuntu test documented on 20 October 2026. |
-| Detect USB HID device `1d6b:0126` | The ID and device name were recorded during earlier development. Detection with this package still needs a hardware check. |
-| Refresh the clock and sensor readings on the LCD | Implemented by sending successive backgrounds. Visible refreshes with this package still need a hardware check. |
-| Resume and brightness | Commands are included in the recovered startup sequence. The physical response and persistence still need checking. |
-| Local dashboard rendering | Tested offline with sample readings and with unavailable sensors. |
+| Physical Linux display operation | Weeks of stable operation on the owner's system. |
+| Display a Linux-generated background | Visually observed in the original Ubuntu test. |
+| Local dashboard rendering | Verified offline with both sample data and unavailable sensors. |
 
-A USB acknowledgment means the controller accepted a report. Check the picture, changing clock and brightness on the panel itself.
+This release packages the recovered Linux background-transfer code. A direct comparison with the installed source is pending. Live refresh, brightness, and suspend/resume have separate verification status. USB acknowledgments record controller responses.
 
 ## Install
 
@@ -71,4 +71,4 @@ Run offline tests with `.venv/bin/python -m unittest discover -s tests -v`. See 
 
 ## License
 
-The project's original code and documentation are available under the [MIT License](LICENSE). Pillow is installed separately under its own license. COUGAR and its product names identify the supported hardware. This is an independent project.
+Overdijk Glas & Bouw (OGB) licenses its original code and documentation under the [MIT License](LICENSE). The USB implementation is Python code from the project's Linux dashboard development, based on observed USB behavior. Pillow is installed separately under its own license. COUGAR and its product names identify the supported hardware. This is an independent project.
