@@ -1,0 +1,2 @@
+# Grant the active local desktop session access to the observed LCD interface.
+SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ATTRS{idVendor}=="1d6b", ATTRS{idProduct}=="0126", ATTRS{manufacturer}=="COUGAR Inc.", ATTRS{product}=="COUGAR USB Device", TAG+="uaccess"

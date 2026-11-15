@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cougar-cfv235-linux"
+version = "0.1.0"
+description = "Linux dashboard for the COUGAR CFV235 Vision LCD"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = ["Pillow>=10.1"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+cougar-cfv235 = "cougar_cfv235.cli:main"
+
+[tool.setuptools]
+packages = ["cougar_cfv235"]
